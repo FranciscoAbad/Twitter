@@ -2,6 +2,8 @@ package com.twitter.services;
 
 
 import com.twitter.exceptions.EmailAlreadyTakenException;
+import com.twitter.exceptions.EmailFailedToSendException;
+import com.twitter.exceptions.IncorrectVerificationCodeException;
 import com.twitter.exceptions.UserDoesNotExistException;
 import com.twitter.models.ApplicationUser;
 import com.twitter.models.RegistrationObject;
@@ -9,6 +11,7 @@ import com.twitter.models.Role;
 import com.twitter.repositories.RoleRepository;
 import com.twitter.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -18,11 +21,16 @@ public class UserService {
 
     private final UserRepository userRepo;
     private final RoleRepository roleRepo;
+    private final MailService mailService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepo, RoleRepository roleRepo){
+    public UserService(UserRepository userRepo, RoleRepository roleRepo,MailService mailService,PasswordEncoder passwordEncoder){
         this.userRepo=userRepo;
         this.roleRepo=roleRepo;
+        this.mailService=mailService;
+        this.passwordEncoder=passwordEncoder;
     }
 
     public ApplicationUser getUserByUsername(String username){
@@ -75,7 +83,32 @@ public class UserService {
 
         user.setVerification(generateVerificationNumber());
 
+        try{
+            mailService.sendEmail(user.getEmail(),"Your verification code","Here is your verification code: "+ user.getVerification());
+        }catch(Exception e){
+            throw new EmailFailedToSendException();
+        }
+
         userRepo.save(user);
+    }
+
+    public ApplicationUser verifyEmail(String username,Long code){
+        ApplicationUser user=userRepo.findByUsername(username).orElseThrow(UserDoesNotExistException::new);
+
+        if(code.equals(user.getVerification())){
+            user.setEnabled(true);
+            user.setVerification(null);
+            return userRepo.save(user);
+        }else{
+            throw new IncorrectVerificationCodeException();
+        }
+    }
+
+    public ApplicationUser setPassword(String username, String password){
+        ApplicationUser user=userRepo.findByUsername(username).orElseThrow(UserDoesNotExistException::new);
+        String encodedPassword=passwordEncoder.encode(password);
+        user.setPassword(encodedPassword);
+        return userRepo.save(user);
     }
 
     private String generateUsername(String name){

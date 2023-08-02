@@ -2,6 +2,8 @@ package com.twitter.controllers;
 
 
 import com.twitter.exceptions.EmailAlreadyTakenException;
+import com.twitter.exceptions.EmailFailedToSendException;
+import com.twitter.exceptions.IncorrectVerificationCodeException;
 import com.twitter.exceptions.UserDoesNotExistException;
 import com.twitter.models.ApplicationUser;
 import com.twitter.models.RegistrationObject;
@@ -53,13 +55,36 @@ public class AuthenticationController {
         return userService.updateUser(user);
 
     }
-
+    @ExceptionHandler({EmailFailedToSendException.class})
+    public ResponseEntity<String> handleFailedEmail(){
+        return new ResponseEntity<String>("Email failed to send",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @PostMapping("/email/code")
     public ResponseEntity<String> createEmailVerificationCode(@RequestBody LinkedHashMap<String,String> body){
        userService.generateEmailVerification(body.get("username"));
 
        return new ResponseEntity<String>("Verification code generated,email sent",HttpStatus.OK);
+    }
+
+    @ExceptionHandler({IncorrectVerificationCodeException.class})
+    public ResponseEntity<String> handleIncorrectVerificationCode(){
+        return new ResponseEntity<String>("The code you provided did not match the verification code",HttpStatus.CONFLICT);
+    }
+    @PostMapping("/email/verify")
+    public ApplicationUser verifyEmail(@RequestBody LinkedHashMap<String,String> body){
+        Long code=Long.parseLong(body.get("code"));
+        String username=body.get("username");
+
+        return userService.verifyEmail(username,code);
+    }
+
+    @PutMapping("/update/password")
+    public ApplicationUser updatePassword(@RequestBody LinkedHashMap<String,String> body){
+        String username=body.get("username");
+        String password=body.get("password");
+
+        return userService.setPassword(username,password);
     }
 
 

@@ -50,7 +50,7 @@ const initialState:RegisterSliceState={
         year:0
     },
     dobValid:false,
-    step:4,
+    step:1,
     username:""
 }
 
@@ -72,7 +72,19 @@ export const updateUserPhone=createAsyncThunk(
     async(user:UpdatePhone,thunkApi)=>{
         try{
             const req=await axios.put("http://localhost:8080/auth/update/phone",user);
+            const email=await axios.post("http://localhost:8080/auth/email/code",{username:user.username})
             return await req.data;
+        } catch(e){
+            return thunkApi.rejectWithValue(e);
+        }
+    }
+)
+
+export const resendEmail=createAsyncThunk(
+    'register/resend',
+    async(username:string,thunkApi)=>{
+        try{
+            const req=await axios.post("http://localhost:8080/auth/email/code",{username});
         } catch(e){
             return thunkApi.rejectWithValue(e);
         }
@@ -136,6 +148,14 @@ export const RegisterSlice = createSlice({
             return state;
         })
 
+        builder.addCase(resendEmail.pending,(state,action)=>{
+            state={
+                ...state,
+                loading:true
+            }
+            return state;
+        })
+
         builder.addCase(updateUserPhone.fulfilled,(state,action)=>{
             let nextStep= state.step+1;
             state={
@@ -159,6 +179,15 @@ export const RegisterSlice = createSlice({
            
             return state;
         })
+        builder.addCase(resendEmail.fulfilled,(state,action)=>{
+            state={
+                ...state,
+                loading:false,
+                error:false,
+            }
+           
+            return state;
+        })
 
         builder.addCase(registerUser.rejected,(state,action)=>{
             state.error=true;
@@ -168,6 +197,15 @@ export const RegisterSlice = createSlice({
         })
 
         builder.addCase(updateUserPhone.rejected,(state,action)=>{
+            state={
+                ...state,
+                loading:false,
+                error:true,
+            }
+            return state;
+        })
+
+        builder.addCase(resendEmail.rejected,(state,action)=>{
             state={
                 ...state,
                 loading:false,
