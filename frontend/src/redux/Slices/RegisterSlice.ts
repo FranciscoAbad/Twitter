@@ -16,11 +16,22 @@ interface RegisterSliceState{
     dobValid:boolean; 
     step:number;
     username:string;
+    phoneNumber:string;
 }
 
 interface UpdatePayload{
     name:string;
     value:string | number | boolean;
+}
+
+interface VerifyCode{
+    username:string;
+    code:string;
+}
+
+interface UpdatePassword{
+    username:string;
+    password:string;
 }
 
 interface RegisterUser{
@@ -50,8 +61,9 @@ const initialState:RegisterSliceState={
         year:0
     },
     dobValid:false,
-    step:1,
-    username:""
+    step:6,
+    username:"",
+    phoneNumber:""
 }
 
 export const registerUser= createAsyncThunk(
@@ -85,6 +97,30 @@ export const resendEmail=createAsyncThunk(
     async(username:string,thunkApi)=>{
         try{
             const req=await axios.post("http://localhost:8080/auth/email/code",{username});
+        } catch(e){
+            return thunkApi.rejectWithValue(e);
+        }
+    }
+)
+
+export const sendVerification=createAsyncThunk(
+    'register/verify',
+    async(body:VerifyCode,thunkApi)=>{
+        try{
+            const req=await axios.post("http://localhost:8080/auth/email/verify",body);
+            return req.data;
+        } catch(e){
+            return thunkApi.rejectWithValue(e);
+        }
+    }
+)
+
+export const updatePassword=createAsyncThunk(
+    'register/password',
+    async(body:UpdatePassword,thunkApi)=>{
+        try{
+            const req=await axios.put("http://localhost:8080/auth/update/password",body);
+            return req.data;
         } catch(e){
             return thunkApi.rejectWithValue(e);
         }
@@ -155,6 +191,21 @@ export const RegisterSlice = createSlice({
             }
             return state;
         })
+        builder.addCase(sendVerification.pending,(state,action)=>{
+            state={
+                ...state,
+                loading:true
+            }
+            return state;
+        })
+
+        builder.addCase(updatePassword.pending,(state,action)=>{
+            state={
+                ...state,
+                loading:true
+            }
+            return state;
+        })
 
         builder.addCase(updateUserPhone.fulfilled,(state,action)=>{
             let nextStep= state.step+1;
@@ -189,6 +240,30 @@ export const RegisterSlice = createSlice({
             return state;
         })
 
+        builder.addCase(sendVerification.fulfilled,(state,action)=>{
+            let nextStep=state.step +1;
+            state={
+                ...state,
+                loading:false,
+                error:false,
+                step:nextStep
+            }
+           
+            return state;
+        })
+
+        builder.addCase(updatePassword.fulfilled,(state,action)=>{
+            state={
+                ...state,
+                loading:false,
+                error:false
+            }
+            console.log("Pushing to homepage")
+            return state;
+
+            
+        })
+
         builder.addCase(registerUser.rejected,(state,action)=>{
             state.error=true;
             state.loading=false;
@@ -210,6 +285,28 @@ export const RegisterSlice = createSlice({
                 ...state,
                 loading:false,
                 error:true,
+            }
+            return state;
+        })
+
+        builder.addCase(sendVerification.rejected,(state,action)=>{
+            
+            state={
+                ...state,
+                loading:false,
+                error:true
+                
+            }
+            return state;
+        })
+
+        builder.addCase(updatePassword.rejected,(state,action)=>{
+            
+            state={
+                ...state,
+                loading:false,
+                error:true
+                
             }
             return state;
         })

@@ -20,21 +20,25 @@ export const ValidatedTextInput:React.FC<ValidatedTextInputProps> = ({data,valid
 
     const focus=():void=>{
         setBorderActive(!borderActive);
+      
         if(!value){
             setLabelActive(!labelActive)
         }
+       
     }
 
     const update=(e:React.ChangeEvent<HTMLInputElement>):void=>{
         setValue(e.target.value)
-        console.log("send the info back to the dispatcher");
+       // console.log("send the info back to the dispatcher");
         changeValue(e);
     }
 
     useEffect(() => {
         if(value  && !labelActive){
             setLabelActive(true);
+            console.log("ACTIVOOOO")
         }
+        
 
         setColor(determineValidatedTextLabel(borderActive,valid));
       

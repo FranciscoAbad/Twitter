@@ -7,7 +7,7 @@ import { validatePhone } from '../../../../services/validator'
 import { StyledNextButton } from '../RegisterNextButton/RegisterNextButton'
 import { useDispatch,useSelector } from 'react-redux'
 import { AppDispatch,RootState } from '../../../../redux/Store'
-import { updateUserPhone } from '../../../../redux/Slices/RegisterSlice'
+import { updateUserPhone,updateRegister } from '../../../../redux/Slices/RegisterSlice'
 import './RegisterFormFour.css'
 
 export const RegisterFormFour:React.FC=()=>{
@@ -26,6 +26,10 @@ export const RegisterFormFour:React.FC=()=>{
     }
     const changePhoneNumber=(e:React.ChangeEvent<HTMLInputElement>)=>{
         setPhoneNumber(e.target.value);
+        dispatch(
+            updateRegister({name:"phoneNumber",
+                            value:e.target.value})
+        )
         
     }
     const sendPhoneNumber=()=>{
@@ -37,7 +41,6 @@ export const RegisterFormFour:React.FC=()=>{
    
 
     useEffect(()=>{
-        console.log(phoneCode,phoneNumber);
         if(phoneNumber){
             setValid(validatePhone(phoneNumber));
         }

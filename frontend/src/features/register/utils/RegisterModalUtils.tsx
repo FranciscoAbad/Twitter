@@ -4,6 +4,7 @@ import { RegisterFormThree } from "../components/RegisterFormThree/RegisterFormT
 import { RegisterFormFour } from "../components/RegisterFormFour/RegisterFormFour"
 import data from '../../../data/countrycodes.json'
 import { RegisterFormFive } from "../components/RegisterFormFive/RegisterFormFive"
+import { RegisterFormSix } from "../components/RegisterFormSix/RegisterFormSix"
 export const determineModalContent=(step:number):JSX.Element=>{
 
     switch(step){
@@ -12,7 +13,7 @@ export const determineModalContent=(step:number):JSX.Element=>{
        case 3: return <RegisterFormThree/>
        case 4: return <RegisterFormFour/>
        case 5: return <RegisterFormFive/>
-       case 6: return <span>Registration Step 6</span>
+       case 6: return <RegisterFormSix/>
        default: return <span></span>
     }
 

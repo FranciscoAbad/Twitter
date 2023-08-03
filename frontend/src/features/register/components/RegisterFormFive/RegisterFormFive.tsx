@@ -4,7 +4,7 @@ import { RootState,AppDispatch } from '../../../../redux/Store'
 import { ValidatedTextInput } from '../../../../components/ValidateInput/ValidatedTextInput'
 import './RegisterFormFive.css'
 import { StyledNextButton } from '../RegisterNextButton/RegisterNextButton'
-import { resendEmail } from '../../../../redux/Slices/RegisterSlice'
+import { resendEmail,sendVerification } from '../../../../redux/Slices/RegisterSlice'
 
 export const RegisterFormFive:React.FC=()=>{
 
@@ -20,6 +20,15 @@ export const RegisterFormFive:React.FC=()=>{
         dispatch(resendEmail(state.username))
     }
 
+    const verify=()=>{
+        dispatch(
+            sendVerification({
+                username:state.username,
+                code
+            })
+        )
+    }
+
     return(
         <div className="reg-step-five-container">
             <div className="reg-step-five-content">
@@ -31,8 +40,8 @@ export const RegisterFormFive:React.FC=()=>{
                     label={"Verification code"} 
                     changeValue={handleChange}
                  />
-                 <p className="reg-step-five-message">Didn't recive a email?</p>   
-                 <StyledNextButton active={code?true:false} disabled={code?false:true} color={'black'} onClick={resend}></StyledNextButton>
+                 <p className="reg-step-five-message" onClick={resend}>Didn't recive a email?</p>   
+                 <StyledNextButton active={code?true:false} disabled={code?false:true} color={'black'} onClick={verify}>Next</StyledNextButton>
             </div>
         </div>
     )
