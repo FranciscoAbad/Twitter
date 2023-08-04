@@ -6,11 +6,17 @@ import com.twitter.exceptions.EmailFailedToSendException;
 import com.twitter.exceptions.IncorrectVerificationCodeException;
 import com.twitter.exceptions.UserDoesNotExistException;
 import com.twitter.models.ApplicationUser;
+import com.twitter.models.LoginResponse;
 import com.twitter.models.RegistrationObject;
+import com.twitter.services.TokenService;
 import com.twitter.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
@@ -21,10 +27,14 @@ import java.util.LinkedHashMap;
 public class AuthenticationController {
 
     private final UserService userService;
+    private final TokenService tokenService;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthenticationController(UserService userService){
+    public AuthenticationController(UserService userService,TokenService tokenService, AuthenticationManager authenticationManager){
         this.userService=userService;
+        this.authenticationManager=authenticationManager;
+        this.tokenService=tokenService;
     }
 
     @ExceptionHandler({EmailAlreadyTakenException.class})
@@ -85,6 +95,20 @@ public class AuthenticationController {
         String password=body.get("password");
 
         return userService.setPassword(username,password);
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody LinkedHashMap<String,String> body){
+        String username=body.get("username");
+        String password=body.get("password");
+
+        try{
+            Authentication auth=authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
+            String token=tokenService.generateToken(auth);
+            return new LoginResponse(userService.getUserByUsername(username),token);
+        }catch(AuthenticationException e){
+            return new LoginResponse(null,"");
+        }
     }
 
 
