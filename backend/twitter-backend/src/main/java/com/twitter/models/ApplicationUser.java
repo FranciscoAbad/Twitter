@@ -58,6 +58,15 @@ public class ApplicationUser {
     @JsonIgnore
     private Set<ApplicationUser> following;
 
+    @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(
+            name="followers",
+            joinColumns={@JoinColumn(name="user_id")},
+            inverseJoinColumns = {@JoinColumn(name="follower_id")}
+    )
+    @JsonIgnore
+    private Set<ApplicationUser> followers;
+
 
 
     @ManyToMany(fetch=FetchType.EAGER)
@@ -77,6 +86,8 @@ public class ApplicationUser {
     public ApplicationUser(){
 
         this.authorities=new HashSet<>();
+        this.following=new HashSet<>();
+        this.followers=new HashSet<>();
         this.enabled=false;
     }
 
@@ -168,6 +179,54 @@ public class ApplicationUser {
         this.verification = verification;
     }
 
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public Image getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(Image profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
+    public Image getBannerPicture() {
+        return bannerPicture;
+    }
+
+    public void setBannerPicture(Image bannerPicture) {
+        this.bannerPicture = bannerPicture;
+    }
+
+    public Set<ApplicationUser> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<ApplicationUser> following) {
+        this.following = following;
+    }
+
+    public Set<ApplicationUser> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<ApplicationUser> followers) {
+        this.followers = followers;
+    }
+
     @Override
     public String toString() {
         return "ApplicationUser{" +
@@ -179,6 +238,12 @@ public class ApplicationUser {
                 ", dateOfBirth=" + dateOfBirth +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", bio='" + bio + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", profilePicture=" + profilePicture +
+                ", bannerPicture=" + bannerPicture +
+                ", following=" + following.size() +
+                ", followers=" + followers.size() +
                 ", authorities=" + authorities +
                 ", enabled=" + enabled +
                 ", verification=" + verification +
