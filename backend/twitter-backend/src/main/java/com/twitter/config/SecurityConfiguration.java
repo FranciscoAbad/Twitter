@@ -59,6 +59,7 @@ public class SecurityConfiguration {
                 .csrf(csrf->csrf.disable())
                 .authorizeRequests(auth->auth
                         .mvcMatchers("/auth/**").permitAll()
+                        .mvcMatchers("/images/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -37,6 +37,29 @@ public class ApplicationUser {
     @JsonIgnore
     private String password;
 
+    private String bio;
+
+    private String nickname;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="profile_picture", referencedColumnName="image_id")
+    private Image profilePicture;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="banner_picture", referencedColumnName="image_id")
+    private Image bannerPicture;
+
+    @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(
+            name="following",
+            joinColumns={@JoinColumn(name="user_id")},
+            inverseJoinColumns = {@JoinColumn(name="following_id")}
+    )
+    @JsonIgnore
+    private Set<ApplicationUser> following;
+
+
+
     @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(
             name="user_role_junction",
