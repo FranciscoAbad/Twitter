@@ -3,6 +3,9 @@ import "./assets/global.css"
 import {ThemeProvider,createGlobalStyle} from 'styled-components'
 import {Landing} from "./pages/Landing"
 import { Theme } from './utils/GlobalInterfaces';
+import {BrowserRouter as Router,Routes,Route} from 'react-router-dom'
+import { Feed } from './pages/Feed';
+
 
 const theme:Theme={
   colors:{
@@ -28,7 +31,13 @@ export const App = () => {
   return (
     <ThemeProvider  theme={theme}>
       <GlobalStyle/>
-        <Landing/>   
+        
+          <Routes>
+            <Route path="/" element={<Landing/>}/>
+            <Route path="/home" element={<Feed/>}/>
+          </Routes>
+        
+  
     </ThemeProvider>
     
   )

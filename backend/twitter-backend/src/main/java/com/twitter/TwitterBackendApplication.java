@@ -44,6 +44,17 @@ u.setEmail("telken@gmail.com");
 	 userRepo.save(u);
 
 
+	 ApplicationUser u2=new ApplicationUser();
+	 u2.setAuthorities(roles);
+	 u2.setFirstName("Srraancisco");
+	 u2.setLastName("Abad");
+	 u2.setPassword(passwordEncoder.encode("12345678"));
+	 u2.setUsername("santiago");
+	 u2.setEmail("telkennn@gmail.com");
+	 u2.setEnabled(true);
+	 userRepo.save(u2);
+
+
 
 
 

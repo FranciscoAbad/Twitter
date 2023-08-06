@@ -1,6 +1,7 @@
 package com.twitter.controllers;
 
 import com.google.common.net.HttpHeaders;
+import com.twitter.exceptions.FollowException;
 import com.twitter.exceptions.UnabledToSavePhotoException;
 import com.twitter.models.ApplicationUser;
 import com.twitter.services.ImageService;
@@ -11,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 
 @RestController
@@ -31,30 +35,54 @@ public class UserController {
 
     @GetMapping("/verify")
     public ApplicationUser verifyIdentity(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        String username="";
-        ApplicationUser user;
-
-        if(token.substring(0,6).equals("Bearer")){
-            String strippedToken=token.substring(7);
-            username=tokenService.getUsernameFromToken(strippedToken);
-        }
-
-        try{
-            user=userService.getUserByUsername(username);
-        }catch (Exception e){
-            user=null;
-        }
-        return user;
+        String username=tokenService.getUsernameFromToken(token);
+        return userService.getUserByUsername(username);
     }
 
     @PostMapping("/pfp")
-    public ResponseEntity<String> uploadProfilePicture(@RequestParam("image") MultipartFile file) throws UnabledToSavePhotoException {
+    public ApplicationUser uploadProfilePicture(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestParam("image") MultipartFile file) throws UnabledToSavePhotoException {
 
-        String uploadImage= imageService.uploadImage(file,"pfp");
+        String username=tokenService.getUsernameFromToken(token);
+        return userService.setProfileOrBannerPicture(username,file,"pfp");
+    }
 
-            return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
+    @PostMapping("/banner")
+    public ApplicationUser uploadBannerPicture(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestParam("image") MultipartFile file) throws UnabledToSavePhotoException {
+
+        String username=tokenService.getUsernameFromToken(token);
+        return userService.setProfileOrBannerPicture(username,file,"bnr");
+    }
+
+    @PutMapping("/")
+    public ApplicationUser updateUser(@RequestBody ApplicationUser u){
+        return userService.updateUser(u);
+    }
+
+    @ExceptionHandler({FollowException.class})
+    public ResponseEntity<String> handleFollowException(){
+        return new ResponseEntity<String>("Users cannot follow themselves",HttpStatus.FORBIDDEN);
+    }
+    @PutMapping("/follow")
+    public Set<ApplicationUser> followUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody LinkedHashMap<String,String> body) throws FollowException {
+        String loggedInUser=tokenService.getUsernameFromToken(token);
+        String followedUser=body.get("followedUser");
+
+        return userService.followUser(loggedInUser,followedUser);
 
     }
+
+
+    @GetMapping("/following/{username}")
+    public Set<ApplicationUser> getFollowingList(@PathVariable("username") String username){
+        return userService.retrieveFollowingList(username);
+    }
+
+    @GetMapping("/followers/{username}")
+    public Set<ApplicationUser> getFollowerList(@PathVariable("username") String username){
+        return userService.retrieveFollowersList(username);
+    }
+
+
 
 
 }

@@ -11,9 +11,6 @@ interface RegisterStepProps{
 }
 
 export const RegisterStepCounter:React.FC<RegisterStepProps> = ({step,changeStep}) => {
-  
-
-  
     return (
     <div className="reg-step-counter-container">
         <div className={iconClass(step)} onClick={changeStep}>

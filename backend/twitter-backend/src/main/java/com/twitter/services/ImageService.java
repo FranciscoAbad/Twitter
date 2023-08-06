@@ -28,7 +28,7 @@ public class ImageService {
         this.imageRepository = imageRepository;
     }
 
-    public String uploadImage(MultipartFile file, String prefix) throws UnabledToSavePhotoException{
+    public Image uploadImage(MultipartFile file, String prefix) throws UnabledToSavePhotoException{
         try{
             String extension="." + file.getContentType().split("/")[1];
             File img=File.createTempFile(prefix,extension,DIRECTORY);
@@ -41,7 +41,7 @@ public class ImageService {
 
             Image saved=imageRepository.save(i);
 
-            return "file uploaded successfully" + img.getName();
+            return saved;
 
 
         }catch(IOException e){
