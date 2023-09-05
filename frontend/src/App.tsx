@@ -24,7 +24,6 @@ const GlobalStyle=createGlobalStyle`
   font-family:'IBM Plex Sans', sans-serif;
   font-weight:500;
 }
-
 `
 
 export const App = () => {
