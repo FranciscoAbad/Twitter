@@ -49,6 +49,7 @@ public class MailService {
             message=gmail.users().messages().send("me",message).execute();
 
         }catch(Exception e){
+            e.printStackTrace();
             throw new EmailFailedToSendException();
         }
     }
