@@ -1,46 +1,77 @@
-interface ThemeColors{
-    blue:string;
-    black:string;
-    darkGray:string;
-    gray:string;
-    lightGray:string;
-    white:string;
-    error:string;
+interface ThemeColors {
+  blue: string;
+  black: string;
+  darkGray: string;
+  gray: string;
+  lightGray: string;
+  white: string;
+  error: string;
 }
 
-export interface Theme{
-    colors: ThemeColors
+export interface Theme {
+  colors: ThemeColors;
 }
 
-export interface StyledInputProps{
-    active:boolean;
-    valid:boolean;
-    theme:Theme;
-    color?:string;
+export interface StyledInputProps {
+  active: boolean;
+  valid: boolean;
+  theme: Theme;
+  color?: string;
 }
 
-export interface ValidatedInputState{
-    active:boolean;
-    valid:boolean;
-    typedIn:boolean;
-    labelActive:boolean;
-    labelColor:string;
-    value:string;
+export interface ValidatedInputState {
+  active: boolean;
+  valid: boolean;
+  typedIn: boolean;
+  labelActive: boolean;
+  labelColor: string;
+  value: string;
 }
 
-export interface Dob{
-    month:number;
-    day:number;
-    year:number;
+export interface Dob {
+  month: number;
+  day: number;
+  year: number;
 }
 
-export interface StyledNextButtonProps{
-    active:boolean;
-    theme:Theme;
-    color:string;
+export interface StyledNextButtonProps {
+  active: boolean;
+  theme: Theme;
+  color: string;
 }
 
-export interface StyledCheckboxProps{
-    active:boolean,
-    theme:Theme;
+export interface StyledCheckboxProps {
+  active: boolean;
+  theme: Theme;
+}
+
+export interface User {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  phone: string;
+  dateOfBirth: Dob;
+  bio: string;
+  nickname: string;
+  profilePicture: string;
+  bannerPicture: string;
+}
+
+interface RGBA {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+}
+
+export interface ModalButtonProps {
+  fontColor: string;
+  borderColor?: string;
+  backgroundColor: string;
+  fontSize: number;
+  fontWeight: number;
+  hoverBackground: RGBA;
+  hoverBorder?: RGBA;
 }
