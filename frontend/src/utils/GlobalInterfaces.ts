@@ -67,6 +67,8 @@ interface RGBA {
 }
 
 export interface ModalButtonProps {
+  active: boolean;
+  height: number;
   fontColor: string;
   borderColor?: string;
   backgroundColor: string;

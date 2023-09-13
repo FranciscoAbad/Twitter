@@ -1,6 +1,7 @@
 package com.twitter.services;
 
 
+import com.twitter.dto.FindUsernameDTO;
 import com.twitter.exceptions.*;
 import com.twitter.models.ApplicationUser;
 import com.twitter.models.Image;
@@ -212,5 +213,12 @@ public class UserService implements UserDetailsService {
     public Set<ApplicationUser> retrieveFollowersList(String username) {
         ApplicationUser user=userRepo.findByUsername(username).orElseThrow(UserDoesNotExistException::new);
         return user.getFollowers();
+    }
+
+    public String verifyUsername(FindUsernameDTO credential){
+        ApplicationUser user=userRepo.findByEmailOrPhoneOrUsername(credential.getEmail(), credential.getPhone(), credential.getUsername())
+                .orElseThrow(UserDoesNotExistException::new);
+      return user.getUsername();
+
     }
 }

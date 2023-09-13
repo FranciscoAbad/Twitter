@@ -1,13 +1,23 @@
 import React from "react";
 import { ValidatedDisplay } from "../../../../components/ValidateInput/ValidatedDisplay";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../redux/Store";
+import { AppDispatch, RootState } from "../../../../redux/Store";
 import { stringifyDate } from "../../../../utils/DateUtils";
-
+import { useDispatch } from "react-redux";
 import "./RegisterForm.css";
 import "../../../../assets/global.css";
+import { updateRegister } from "../../../../redux/Slices/RegisterSlice";
 export const RegisterFormThree: React.FC = () => {
   const state = useSelector((state: RootState) => state.register);
+  const dispatch: AppDispatch = useDispatch();
+  const focus = () => {
+    dispatch(
+      updateRegister({
+        name: "step",
+        value: 1,
+      })
+    );
+  };
 
   return (
     <div className="register-container">
@@ -17,6 +27,7 @@ export const RegisterFormThree: React.FC = () => {
           <ValidatedDisplay
             label={"Name"}
             value={state.firstName + state.lastName}
+            handleFocus={focus}
           />
           {state.error ? (
             <p className="register-error color-red">
@@ -27,7 +38,11 @@ export const RegisterFormThree: React.FC = () => {
           )}
         </div>
         <div className="register-three-value-wrapper">
-          <ValidatedDisplay label={"Email"} value={state.email} />
+          <ValidatedDisplay
+            label={"Email"}
+            value={state.email}
+            handleFocus={focus}
+          />
         </div>
         <div
           className={
@@ -39,6 +54,7 @@ export const RegisterFormThree: React.FC = () => {
           <ValidatedDisplay
             label={"Birth date"}
             value={stringifyDate(state.dob)}
+            handleFocus={focus}
           />
         </div>
         <p className="register-text-sm color-gray">

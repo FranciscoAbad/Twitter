@@ -7,10 +7,14 @@ import { RightSideBar, LandingFooter } from "../features/landing";
 
 import whiteLogo from "../assets/Twitter-logo-white-large.png";
 import LoginModal from "../features/login";
+import { AppDispatch } from "../redux/Store";
+import { useDispatch } from "react-redux";
+import { resetUsername } from "../redux/Slices/UserSlice";
 
 export const Landing: React.FC = () => {
   const [register, setRegister] = useState<boolean>(false);
   const [login, setLogin] = useState<boolean>(false);
+  const dispatch: AppDispatch = useDispatch();
 
   const toggleRegister = () => {
     setRegister(!register);
@@ -18,6 +22,7 @@ export const Landing: React.FC = () => {
 
   const toggleLogin = () => {
     setLogin(!login);
+    dispatch(resetUsername);
   };
   return (
     <div className="home-container bg-color">
@@ -26,7 +31,14 @@ export const Landing: React.FC = () => {
       ) : (
         <></>
       )}
-      {login ? <LoginModal toggleModal={toggleLogin}></LoginModal> : <></>}
+      {login ? (
+        <LoginModal
+          toggleRegister={toggleRegister}
+          toggleModal={toggleLogin}
+        ></LoginModal>
+      ) : (
+        <></>
+      )}
       <div className="landing-layout">
         <div className="landing-top-left bg-blue">
           <img src={whiteLogo} className="landing-top-left-logo" />

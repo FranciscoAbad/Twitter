@@ -1,19 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { ValidatedTextInput } from "../../../../components/ValidateInput/ValidatedTextInput";
 import { ModalButton } from "../../../../components/ModalButton/ModalButton";
-
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../../redux/Store";
+import { validatePhone, validEmail } from "../../../../services/validator";
 import google from "../../../../assets/Google-logo-large.png";
 import apple from "../../../../assets/Apple-logo-large.png";
 
 import "./LoginFormOne.css";
 import "../../../../assets/global.css";
+import { verifyUsername } from "../../../../redux/Slices/UserSlice";
 
-export const LoginFormOne: React.FC = () => {
+interface LoginFormOneProps {
+  noAccount: () => void;
+}
+
+export const LoginFormOne: React.FC<LoginFormOneProps> = ({ noAccount }) => {
+  const dispatch: AppDispatch = useDispatch();
+  const state = useSelector((state: RootState) => state.user);
+
+  const [credential, setCredential] = useState<string>("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setCredential(e.target.value);
+  };
+
+  const findUsername = (): void => {
+    let body = {
+      email: "",
+      phone: "",
+      username: "",
+    };
+
+    if (validEmail(credential)) {
+      body.email = credential;
+    } else if (validatePhone(credential)) {
+      body.phone = credential;
+    } else {
+      body.username = credential;
+    }
+    console.log(body);
+    dispatch(verifyUsername(body));
+  };
+
   return (
     <div className="login-form-one-container">
       <h1 className="login-form-header">Sign in to Twitter</h1>
       <ModalButton
+        active={true}
+        height={40}
         fontColor={"#536471"}
         borderColor={"#536471"}
         backgroundColor={"white"}
@@ -36,6 +72,8 @@ export const LoginFormOne: React.FC = () => {
         Signin with Google
       </ModalButton>
       <ModalButton
+        active={true}
+        height={40}
         fontColor={"black"}
         borderColor={"#536471"}
         backgroundColor={"white"}
@@ -64,13 +102,20 @@ export const LoginFormOne: React.FC = () => {
         <div className="login-form-one-line"></div>
       </div>
       <ValidatedTextInput
-        valid={true}
+        valid={!state.error}
         name={"identifier"}
         label={"Phone,email, or username"}
-        changeValue={() => {}}
+        changeValue={handleChange}
       />
+      {state.error ? (
+        <p className="login-form-error color-red">Unable to find user</p>
+      ) : (
+        <></>
+      )}
 
       <ModalButton
+        active={true}
+        height={40}
         fontColor={"white"}
         backgroundColor={"black"}
         fontSize={16}
@@ -81,10 +126,13 @@ export const LoginFormOne: React.FC = () => {
           b: 0,
           a: 0.9,
         }}
+        onClick={findUsername}
       >
         Next
       </ModalButton>
       <ModalButton
+        active={true}
+        height={40}
         fontColor={"black"}
         borderColor={"#D3D3D3"}
         backgroundColor={"white"}
@@ -106,7 +154,10 @@ export const LoginFormOne: React.FC = () => {
         Forgot password
       </ModalButton>
       <p className="login-form-one-text color-gray">
-        Don't have an account? <span className="link color-blue">Sign up</span>
+        Don't have an account?{" "}
+        <span className="link color-blue" onClick={noAccount}>
+          Sign up
+        </span>
       </p>
     </div>
   );
