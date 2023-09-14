@@ -11,11 +11,13 @@ import { LoginButton } from "../LoginButton/LoginButton";
 interface LoginModalProps {
   toggleModal: () => void;
   toggleRegister: () => void;
+  toggleForgotPassword: () => void;
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({
   toggleModal,
   toggleRegister,
+  toggleForgotPassword,
 }) => {
   const state = useSelector((state: RootState) => state.user);
   const [password, setPassword] = useState<string>("");
@@ -29,14 +31,22 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     toggleRegister();
   };
 
+  const openForgot = () => {
+    toggleModal();
+    toggleForgotPassword();
+  };
+
   return (
     <Modal
       topContent={<LoginModalTop closeModal={toggleModal} />}
       content={
         state.username ? (
-          <LoginFormTwo setPassword={handlePassword} />
+          <LoginFormTwo
+            setPassword={handlePassword}
+            forgotPassword={openForgot}
+          />
         ) : (
-          <LoginFormOne noAccount={openRegister} />
+          <LoginFormOne noAccount={openRegister} forgotPassword={openForgot} />
         )
       }
       bottomContent={

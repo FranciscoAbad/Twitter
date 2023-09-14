@@ -2,12 +2,15 @@ package com.twitter.controllers;
 
 
 import com.twitter.dto.FindUsernameDTO;
+import com.twitter.dto.PasswordCodeDTO;
 import com.twitter.exceptions.*;
 import com.twitter.models.ApplicationUser;
 import com.twitter.models.LoginResponse;
 import com.twitter.models.RegistrationObject;
+import com.twitter.services.MailService;
 import com.twitter.services.TokenService;
 import com.twitter.services.UserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,11 +33,14 @@ public class AuthenticationController {
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
 
+    private final MailService emailService;
+
     @Autowired
-    public AuthenticationController(UserService userService,TokenService tokenService, AuthenticationManager authenticationManager){
+    public AuthenticationController(UserService userService,TokenService tokenService, AuthenticationManager authenticationManager,MailService emailService){
         this.userService=userService;
         this.authenticationManager=authenticationManager;
         this.tokenService=tokenService;
+        this.emailService=emailService;
     }
 
     @ExceptionHandler({EmailAlreadyTakenException.class})
@@ -122,6 +128,24 @@ public class AuthenticationController {
         httpHeaders.setContentType(MediaType.TEXT_PLAIN);
         String username=userService.verifyUsername(credential);
         return new ResponseEntity<String>(username,HttpStatus.OK);
+    }
+
+    @PostMapping("/identifiers")
+    public FindUsernameDTO findIdentifiers(@RequestBody FindUsernameDTO credential){
+        ApplicationUser user=userService.getUserEmailAndPhone(credential);
+        return new FindUsernameDTO(user.getEmail(),user.getUsername(),user.getPhone());
+    }
+
+    @PostMapping("/password/code")
+    public ResponseEntity<String> retrievePasswordCode(@RequestBody PasswordCodeDTO body) throws EmailFailedToSendException{
+        String email=body.getEmail();
+        int code= body.getCode();
+        try{
+            emailService.sendEmail(email,"Your password reset code",""+code);
+        }catch (Exception e){
+            throw new EmailFailedToSendException();
+        }
+        return new ResponseEntity<String>("Code sent successfully",HttpStatus.OK);
     }
 
 

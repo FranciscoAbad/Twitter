@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ValidatedTextInput } from "../../../../components/ValidateInput/ValidatedTextInput";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { AppDispatch, RootState } from "../../../../redux/Store";
 import { useSelector, useDispatch } from "react-redux";
 import { setFromRegister, loginUser } from "../../../../redux/Slices/UserSlice";
@@ -67,7 +68,7 @@ export const RegisterFormSix: React.FC = () => {
           />
           <div onClick={toggleView} className="register-six-icon">
             {active ? (
-              <VisibilityOutlinedIcon
+              <VisibilityOffOutlinedIcon
                 sx={{
                   fontSize: "24px",
                 }}

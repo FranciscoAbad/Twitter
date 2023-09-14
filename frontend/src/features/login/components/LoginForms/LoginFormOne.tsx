@@ -14,9 +14,13 @@ import { verifyUsername } from "../../../../redux/Slices/UserSlice";
 
 interface LoginFormOneProps {
   noAccount: () => void;
+  forgotPassword: () => void;
 }
 
-export const LoginFormOne: React.FC<LoginFormOneProps> = ({ noAccount }) => {
+export const LoginFormOne: React.FC<LoginFormOneProps> = ({
+  noAccount,
+  forgotPassword,
+}) => {
   const dispatch: AppDispatch = useDispatch();
   const state = useSelector((state: RootState) => state.user);
 
@@ -150,6 +154,7 @@ export const LoginFormOne: React.FC<LoginFormOneProps> = ({ noAccount }) => {
           b: 211,
           a: 1.0,
         }}
+        onClick={forgotPassword}
       >
         Forgot password
       </ModalButton>

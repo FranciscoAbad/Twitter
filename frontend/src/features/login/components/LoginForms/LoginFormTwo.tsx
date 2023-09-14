@@ -3,17 +3,21 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../redux/Store";
 import { ValidatedTextInput } from "../../../../components/ValidateInput/ValidatedTextInput";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import VisibilityOffOutlined from "@mui/icons-material/VisibilityOffOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import "./LoginFormOne.css";
 import { ValidatedDisplay } from "../../../../components/ValidateInput/ValidatedDisplay";
 import { useNavigate } from "react-router-dom";
 
 interface LoginFormTwoProps {
   setPassword: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  forgotPassword: () => void;
 }
 
-export const LoginFormTwo: React.FC<LoginFormTwoProps> = ({ setPassword }) => {
+export const LoginFormTwo: React.FC<LoginFormTwoProps> = ({
+  setPassword,
+  forgotPassword,
+}) => {
   const state = useSelector((state: RootState) => state.user);
 
   const navigate = useNavigate();
@@ -53,7 +57,7 @@ export const LoginFormTwo: React.FC<LoginFormTwoProps> = ({ setPassword }) => {
           />
           <div onClick={toggleView} className="login-form-two-password-icon">
             {active ? (
-              <VisibilityOutlinedIcon
+              <VisibilityOffOutlinedIcon
                 sx={{
                   fontSize: "24px",
                 }}
@@ -71,7 +75,12 @@ export const LoginFormTwo: React.FC<LoginFormTwoProps> = ({ setPassword }) => {
           ) : (
             <></>
           )}
-          <p className="login-form-two-forgot color-blue">Forgot password?</p>
+          <p
+            className="login-form-two-forgot link color-blue"
+            onClick={forgotPassword}
+          >
+            Forgot password?
+          </p>
         </div>
       </div>
     </div>
