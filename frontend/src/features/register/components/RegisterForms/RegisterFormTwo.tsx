@@ -1,6 +1,6 @@
 import React from "react";
 
-import "../RegisterForms/RegisterForm.css";
+import "./RegisterForm.css";
 import "../../../../assets/global.css";
 import { Checkbox } from "../../../../components/Checkbox/Checkbox";
 

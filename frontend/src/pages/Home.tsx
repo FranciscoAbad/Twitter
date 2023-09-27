@@ -6,7 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "../redux/Store";
 import { setToken } from "../redux/Slices/UserSlice";
 
-export const Feed: React.FC = () => {
+import "./Home.css";
+import { Navigation } from "../components/Navigation/Navigation";
+import { Feed } from "../features/feed/components/Feed/Feed";
+
+export const Home: React.FC = () => {
   const state = useSelector((state: RootState) => state.user);
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -21,8 +25,16 @@ export const Feed: React.FC = () => {
     }
   }, []);
   return (
-    <div>
-      <h1>FEED</h1>
+    <div className="home">
+      <div className="home-layout">
+        <div className="home-navigation-section">
+          <Navigation />
+        </div>
+        <div className="home-content-section">
+          <Feed />
+        </div>
+        <div className="home-info-section"></div>
+      </div>
     </div>
   );
 };
